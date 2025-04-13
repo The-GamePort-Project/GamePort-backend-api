@@ -45,8 +45,8 @@ With Mau, you can deploy your application in just a few clicks, allowing you to 
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:
-[Deployment documentation](https://docs.nestjs.com/deployment) 
-[Documentation](https://docs.nestjs.com) 
-[Devtools](https://devtools.nestjs.com)
+- [Deployment documentation](https://docs.nestjs.com/deployment) 
+- [Documentation](https://docs.nestjs.com) 
+- [Devtools](https://devtools.nestjs.com)
 
 
