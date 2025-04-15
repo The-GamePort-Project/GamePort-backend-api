@@ -49,6 +49,27 @@ Check out a few resources that may come in handy when working with NestJS:
 - [Documentation](https://docs.nestjs.com)
 - [Devtools](https://devtools.nestjs.com)
 
+## NestJs tips:
+
+- Project structure:
+  user/
+  ├── dto/ # GraphQL DTOs (InputTypes)
+  │ ├── create-user.input.ts
+  │ └── update-user.input.ts
+  ├── models/ # GraphQL ObjectTypes
+  │ └── user.model.ts
+  ├── interfaces/ # Optional: shared TypeScript interfaces
+  │ └── user.interface.ts
+  ├── resolvers/ # GraphQL resolvers
+  │ └── user.resolver.ts
+  ├── services/ # Business logic, calls Prisma, etc.
+  │ └── user.service.ts
+  ├── user.module.ts # NestJS module definition
+
+- @ObjectType() -> Defines GraphQL response -> What GraphQL returns
+- @InputType() -> Defines GraphQL -> input What GraphQL receives
+- DTO (class) Defines internal input Input validation (e.g. with class-validator)
+
 ## PRISMA Instructions
 
 1. Set the DATABASE_URL in the .env file to point to your existing database. If your database has no tables yet, read https://pris.ly/d/getting-started
@@ -57,7 +78,7 @@ Check out a few resources that may come in handy when working with NestJS:
 4. Run prisma generate to generate the Prisma Client. You can then start querying your database.
 5. Tip: Explore how you can extend the ORM with scalable connection pooling, global caching, and real-time database events. Read: https://pris.ly/cli/beyond-orm
 
-## Commands!
+## PRISMA Commands!
 
 1. Use npx prisma migrate dev --name [example-add-username-to-user] when making changes to a schema.
    If you're using migrate dev, it automatically runs prisma generate for you after the migration.
