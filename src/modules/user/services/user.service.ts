@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma/prisma.service';
+import { PrismaService } from 'src/prisma-module/prisma.service';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -16,5 +16,9 @@ export class UserService {
     return this.prisma.user.delete({
       where: { id },
     });
+  }
+
+  async getAllUsers() {
+    return this.prisma.user.findMany();
   }
 }

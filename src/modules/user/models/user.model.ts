@@ -1,7 +1,7 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 @ObjectType()
-export class UserType {
+export class UserModel {
   @Field(() => Int)
   id: number;
 
@@ -9,7 +9,7 @@ export class UserType {
   email: string;
 
   @Field({ nullable: true })
-  name?: string;
+  name: string | null;
 
   @Field()
   createdAt: Date;
