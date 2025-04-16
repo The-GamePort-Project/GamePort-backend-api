@@ -5,15 +5,15 @@ export class UserModel {
   @Field(() => Int)
   id: number;
 
-  @Field()
+  @Field(() => String)
   email: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   name: string | null;
 
-  @Field()
+  @Field(() => Date)
   createdAt: Date;
 
-  @Field()
+  @Field(() => Date)
   updatedAt: Date;
 }
