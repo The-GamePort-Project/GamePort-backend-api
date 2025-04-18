@@ -1,15 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma-module/prisma.service';
-import { handlePrismaError } from 'src/utils';
+import { handlePrismaError, hashPassword } from 'src/utils';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
   // Create a new user in the database
-  async createUser(email: string, name?: string) {
+  async createUser({
+    email,
+    firstname,
+    lastname,
+    username,
+    password,
+  }: {
+    email: string;
+    firstname: string;
+    lastname: string;
+    username: string;
+    password: string;
+  }) {
     try {
+      const hashedPassword = await hashPassword(password);
       return await this.prisma.user.create({
-        data: { email, name },
+        data: {
+          email,
+          firstname,
+          lastname,
+          username,
+          password: hashedPassword,
+        },
       });
     } catch (error) {
       handlePrismaError(error);
@@ -17,7 +36,7 @@ export class UserService {
   }
 
   // Delete a user by ID
-  async deleteUser(id: number) {
+  async deleteUser(id: string) {
     return this.prisma.user.delete({
       where: { id },
     });

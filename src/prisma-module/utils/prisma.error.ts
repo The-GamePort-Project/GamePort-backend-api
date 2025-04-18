@@ -1,5 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { GraphQLError } from 'graphql';
+import { ErrorMessage } from 'src/models';
+import { PrismaErrorCodeMessage } from 'src/models';
 
 export function handlePrismaError(error: unknown): never {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -8,9 +10,9 @@ export function handlePrismaError(error: unknown): never {
         const fields = (error.meta?.target as string[]) || ['unknown'];
         throw new GraphQLError(`Duplicate value for: ${fields.join(', ')}`, {
           extensions: {
-            code: 'DUPLICATE_RECORD',
+            code: PrismaErrorCodeMessage.duplicate_record.code,
             fields,
-            status: 400,
+            status: PrismaErrorCodeMessage.duplicate_record.status,
           },
         });
       }
@@ -50,10 +52,10 @@ export function handlePrismaError(error: unknown): never {
     });
   }
 
-  throw new GraphQLError('Something went wrong', {
+  throw new GraphQLError(ErrorMessage.internal_server_error.message_to_client, {
     extensions: {
-      code: 'INTERNAL_SERVER_ERROR',
-      status: 500,
+      code: ErrorMessage.internal_server_error.code,
+      status: ErrorMessage.internal_server_error.status,
     },
   });
 }
