@@ -1,7 +1,5 @@
 export enum AuthAndSecurity {
   'SALT_ROUNDS' = 10,
-  'ACCESS_TOKEN_EXPIRATION' = '15m',
-  'REFRESH_TOKEN_EXPIRATION' = '30m',
 }
 
 export const ErrorMessage: Record<

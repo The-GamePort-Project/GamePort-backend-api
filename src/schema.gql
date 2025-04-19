@@ -3,9 +3,11 @@
 # ------------------------------------------------------
 
 type UserModel {
-  id: Int!
+  id: String!
   email: String!
-  name: String
+  firstname: String
+  lastname: String
+  username: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -22,9 +24,17 @@ type Query {
 
 type Mutation {
   createUser(data: CreateUserInput!): UserModel!
+  deleteUser(data: DeleteUserInput!): UserModel!
 }
 
 input CreateUserInput {
   email: String!
-  name: String!
+  firstname: String
+  lastname: String
+  username: String!
+  password: String!
+}
+
+input DeleteUserInput {
+  id: String!
 }

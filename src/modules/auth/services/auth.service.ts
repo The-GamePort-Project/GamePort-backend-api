@@ -1,19 +1,31 @@
-import { PrismaService } from 'src/services';
+import { PrismaService, UserService } from 'src/services';
 import { comparePasswords } from 'src/utils';
 import { JwtService } from '@nestjs/jwt';
-import { AuthAndSecurity } from 'src/models';
+import { IJwtPayload } from 'src/models';
+import { ConfigService } from '@nestjs/config';
 import {
   Injectable,
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from '@prisma/client';
 @Injectable()
 export class AuthService {
+  private refreshTokenExp: string | undefined;
+  private accessTokenExp: string | undefined;
+  private jwtSecret: string | undefined;
+  private jwtRefreshSecret: string | undefined;
+
   constructor(
     private prismaService: PrismaService,
     private jwt: JwtService,
-  ) {}
+    private userService: UserService,
+    private config: ConfigService,
+  ) {
+    this.accessTokenExp = this.config.get<string>('JWT_ACCESS_EXPIRATION');
+    this.refreshTokenExp = this.config.get<string>('JWT_REFRESH_EXPIRATION');
+    this.jwtSecret = this.config.get<string>('JWT_SECRET');
+    this.jwtRefreshSecret = this.config.get<string>('JWT_REFRESH_SECRET');
+  }
 
   async validateUser({
     username,
@@ -27,18 +39,13 @@ export class AuthService {
     if ((!username && !email) || !password) {
       throw new BadRequestException('Provide correct credentials.');
     }
-
-    let user: User | null = null;
-
-    if (username) {
-      user = await this.prismaService.user.findUnique({
-        where: { username },
-      });
-    } else {
-      user = await this.prismaService.user.findUnique({
-        where: { email },
-      });
+    if (username && email) {
+      throw new BadRequestException('Provide either username or email.');
     }
+    const user = await this.userService.getUserByUsernameOrEmail({
+      username,
+      email,
+    });
 
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -49,16 +56,35 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
+    console.log('user', user);
     const accessToken = this.jwt.sign(
       { sub: user.id },
-      { expiresIn: AuthAndSecurity.ACCESS_TOKEN_EXPIRATION },
+      { expiresIn: this.accessTokenExp, secret: this.jwtSecret },
     );
-    const refreshToken = this.jwt.sign(
+    const refreshToken: string = this.jwt.sign(
       { sub: user.id },
-      { expiresIn: AuthAndSecurity.REFRESH_TOKEN_EXPIRATION },
+      { expiresIn: this.refreshTokenExp, secret: this.jwtRefreshSecret },
     );
 
     return { accessToken, refreshToken };
+  }
+
+  refreshTokens(refreshToken: string) {
+    const payload: IJwtPayload = this.jwt.verify(refreshToken);
+
+    if (!payload.sub) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const newAccessToken: string = this.jwt.sign(
+      { sub: payload.sub },
+      { expiresIn: this.accessTokenExp, secret: this.jwtSecret },
+    );
+    const newRefreshToken: string = this.jwt.sign(
+      { sub: payload.sub },
+      { expiresIn: this.refreshTokenExp, secret: this.jwtRefreshSecret },
+    );
+
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma-module/prisma.service';
 import { handlePrismaError, hashPassword } from 'src/utils';
+import { User } from '@prisma/client';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -14,8 +15,8 @@ export class UserService {
     password,
   }: {
     email: string;
-    firstname: string;
-    lastname: string;
+    firstname?: string;
+    lastname?: string;
     username: string;
     password: string;
   }) {
@@ -44,5 +45,25 @@ export class UserService {
 
   async getAllUsers() {
     return this.prisma.user.findMany();
+  }
+
+  async getUserByUsernameOrEmail({
+    username,
+    email,
+  }: {
+    username?: string;
+    email?: string;
+  }): Promise<User | null> {
+    let user: User | null = null;
+    if (username) {
+      user = await this.prisma.user.findUnique({
+        where: { username },
+      });
+    } else {
+      user = await this.prisma.user.findUnique({
+        where: { email },
+      });
+    }
+    return user;
   }
 }

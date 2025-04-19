@@ -9,10 +9,13 @@ export class UserModel {
   email: string;
 
   @Field(() => String, { nullable: true })
-  firstname: string;
+  firstname: string | null;
 
   @Field(() => String, { nullable: true })
-  lastname: string;
+  lastname: string | null;
+
+  @Field(() => String)
+  username: string;
 
   @Field(() => Date)
   createdAt: Date;

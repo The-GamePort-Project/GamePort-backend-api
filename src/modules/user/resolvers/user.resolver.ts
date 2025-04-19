@@ -18,6 +18,7 @@ export class UserResolver {
     return users.map((user) => ({
       id: user.id,
       email: user.email,
+      username: user.username,
       firstname: user.firstname ?? '',
       lastname: user.lastname ?? '',
       createdAt: user.createdAt,
@@ -27,11 +28,9 @@ export class UserResolver {
 
   @Mutation(() => UserModel)
   async createUser(@Args('data') data: CreateUserInput): Promise<UserModel> {
-    return await this.userService.createUser({
-      ...data,
-      firstname: data.firstname || '',
-      lastname: data.lastname || '',
-    });
+    console.log('delet');
+    const newUser = await this.userService.createUser({ ...data });
+    return newUser;
   }
 
   @Mutation(() => UserModel)
