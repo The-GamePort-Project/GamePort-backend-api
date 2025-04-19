@@ -24,11 +24,12 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.validateUser(loginDto);
 
-    res.cookie('refresh_token', refreshToken, {
+    res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/auth/refresh',
+      sameSite: 'lax',
+      domain: 'localhost',
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
     return { accessToken };
