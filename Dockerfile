@@ -25,5 +25,7 @@ RUN npm run build
 # Expose the application port (5053 in your case)
 EXPOSE 5053
 
+RUN echo $DATABASE_URL
+
 # Run the Prisma migrations and then start the application at runtime
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
