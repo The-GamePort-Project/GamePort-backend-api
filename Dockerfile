@@ -26,4 +26,4 @@ RUN npm run build
 EXPOSE 5053
 
 # Command to run the application (includes migration)
-CMD ["sh", "-c", "npm run prisma:migrate && node dist/main"]
+CMD ["sh", "-c", "npm run migrate:deploy && node dist/main"]
