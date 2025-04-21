@@ -12,7 +12,12 @@ import { join } from 'path';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env.development', '.env.production'],
+      envFilePath: [
+        '.env',
+        '.env.local',
+        '.env.development',
+        '.env.production',
+      ],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
