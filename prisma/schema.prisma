@@ -22,11 +22,59 @@ model User {
 }
 
 model Review {
-  id        String   @id @default(uuid())
-  content   String
-  rating    Int
-  userId    String
+  id      String @id @default(uuid())
+  content String
+  rating  Int
+  userId  String
+  gameId  String
+
   user      User     @relation(fields: [userId], references: [id])
+  game      Game     @relation(fields: [gameId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Game {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  description   String
+  developer     String
+  publisher     String
+  releaseDate   DateTime
+  coverImageUrl String?
+  trailerUrl    String?
+
+  genres    Genre[]     @relation("GameGenres")
+  platforms Platform[]  @relation("GamePlatforms")
+  reviews   Review[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  GameMedia GameMedia[]
+}
+
+model Genre {
+  id    String @id @default(uuid())
+  name  String @unique
+  games Game[] @relation("GameGenres")
+}
+
+model Platform {
+  id    String @id @default(uuid())
+  name  String @unique
+  games Game[] @relation("GamePlatforms")
+}
+
+model GameMedia {
+  id     String    @id @default(uuid())
+  type   MediaType
+  url    String
+  gameId String
+  game   Game      @relation(fields: [gameId], references: [id])
+}
+
+enum MediaType {
+  IMAGE
+  TRAILER
+  SCREENSHOT
 }

@@ -20,11 +20,8 @@ export class CreateUserInput {
 
 @InputType()
 export class UpdateUserInput {
-  @Field(() => String)
-  email: string;
-
   @Field(() => String, { nullable: true })
-  name?: string;
+  firstname?: string;
 }
 
 @InputType()
