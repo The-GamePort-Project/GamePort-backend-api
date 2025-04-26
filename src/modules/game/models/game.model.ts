@@ -12,26 +12,26 @@ export class GameModel {
   slug: string;
 
   @Field(() => String, { nullable: true })
-  description: string;
+  description?: string | null;
 
   @Field(() => String, { nullable: true })
-  developer: string;
+  developer?: string | null;
 
   @Field(() => String, { nullable: true })
-  publisher: string;
+  publisher?: string | null;
 
   @Field(() => String, { nullable: true })
-  releaseDate: Date;
+  releaseDate?: Date | null;
 
   @Field(() => String, { nullable: true })
-  coverImageUrl: string;
+  coverImageUrl?: string | null;
 
   @Field(() => String, { nullable: true })
-  trailerUrl: string;
+  trailerUrl?: string | null;
 
   @Field(() => Date, { nullable: true })
-  createdAt: Date;
+  createdAt?: Date | null;
 
   @Field(() => Date, { nullable: true })
-  updatedAt: Date;
+  updatedAt?: Date | null;
 }

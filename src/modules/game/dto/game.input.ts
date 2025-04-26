@@ -6,7 +6,7 @@ export class CreateGameInput {
   title: string;
 
   @Field(() => String, { nullable: true })
-  description: string;
+  description: string | null;
 
   @Field(() => String)
   developer: string;
@@ -18,8 +18,8 @@ export class CreateGameInput {
   releaseDate: Date;
 
   @Field(() => String, { nullable: true })
-  coverImageUrl: string;
+  coverImageUrl: string | null;
 
   @Field(() => String, { nullable: true })
-  trailerUrl: string;
+  trailerUrl: string | null;
 }

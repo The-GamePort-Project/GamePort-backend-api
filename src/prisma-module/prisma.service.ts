@@ -14,6 +14,22 @@ export class PrismaService
   async onModuleInit() {
     await this.$connect();
     console.log('Connected successfully!');
+    await this.game
+      .findFirst({
+        where: {
+          genres: {
+            some: {
+              name: 'Action',
+            },
+          },
+        },
+      })
+      .then((game) => {
+        console.log('Game found:', game);
+      })
+      .catch((error) => {
+        console.error('Error finding game:', error);
+      });
   }
   async onModuleDestroy() {
     await this.$disconnect();
