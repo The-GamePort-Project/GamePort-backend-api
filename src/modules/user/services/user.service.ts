@@ -13,18 +13,23 @@ export class UserService {
     firstname,
     lastname,
     username,
-    password,
+    password = undefined,
     provider = 'local',
+    googleId = undefined,
   }: {
     email: string;
     firstname?: string;
     lastname?: string;
     username: string;
-    password: string;
+    password?: string;
     provider?: string;
+    googleId?: string;
   }) {
     try {
-      const hashedPassword = await hashPassword(password);
+      let hashedPassword: string | undefined;
+      if (provider !== 'google' && password) {
+        hashedPassword = await hashPassword(password);
+      }
       return await this.prisma.user.create({
         data: {
           email,
@@ -33,6 +38,7 @@ export class UserService {
           username,
           password: hashedPassword,
           provider,
+          googleId,
         },
       });
     } catch (error) {
@@ -77,19 +83,20 @@ export class UserService {
   }
 
   async findOrCreateGoogleUser(googleUser: IGoogleUser) {
+    console.log('Google user:', googleUser);
     let user: User | null = await this.getUserByGoogleId(googleUser.googleId);
-    const isUsingGoogleProvider = user?.provider === 'google';
+
     if (!user) {
       user = await this.createUser({
         email: googleUser.email,
         firstname: googleUser.firstName,
         lastname: googleUser.lastName,
         username: googleUser.email.split('@')[0],
-        password: googleUser.googleId,
         provider: 'google',
+        googleId: googleUser.googleId,
       });
     }
-    if (!isUsingGoogleProvider) {
+    if (user.provider !== 'google') {
       throw new UnauthorizedException(`Please log in using ${user.provider}`);
     }
     return user;

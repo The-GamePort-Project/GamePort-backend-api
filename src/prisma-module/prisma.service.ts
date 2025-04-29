@@ -12,8 +12,23 @@ export class PrismaService
     this.$extends(slugExtension);
   }
   async onModuleInit() {
-    await this.$connect();
-    console.log('Connected successfully!');
+    const maxRetries = 5;
+    const retryDelay = 3000;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        await this.$connect();
+        console.log('✅ Connected to Prisma database!');
+        break;
+      } catch (error: any) {
+        console.error(`❌ Prisma connection attempt ${attempt} failed.`, error);
+        if (attempt === maxRetries) {
+          console.error('💥 Max retries reached. Exiting.');
+          process.exit(1);
+        }
+        await new Promise((res) => setTimeout(res, retryDelay));
+      }
+    }
     await this.game
       .findFirst({
         where: {

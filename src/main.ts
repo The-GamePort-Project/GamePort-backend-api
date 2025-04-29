@@ -20,6 +20,10 @@ async function bootstrap() {
     'Refresh Token Expiration:',
     configService.get<string>('JWT_REFRESH_EXPIRATION'),
   );
+  console.log(
+    'Connecting to DB:',
+    process.env.DATABASE_URL?.slice(0, 30) + '...',
+  );
   await app.listen(process.env.PORT ?? 3000);
   console.log(`Application is running on: ${process.env.PORT ?? 3000}`);
 }

@@ -13,7 +13,8 @@ export const cookieOptions: Record<string, CookieOptions> = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    domain: 'localhost',
+    domain:
+      process.env.NODE_ENV === 'production' ? 'yourdomain.com' : undefined,
     maxAge: 24 * 60 * 60 * 1000,
   },
   refreshToken: {
