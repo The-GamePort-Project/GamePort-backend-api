@@ -11,16 +11,17 @@ export const AuthConfig = {
 export const cookieOptions: Record<string, CookieOptions> = {
   login: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true,
+    sameSite: 'none',
     domain:
-      process.env.NODE_ENV === 'production' ? 'yourdomain.com' : undefined,
+      process.env.NODE_ENV === 'production' ? 'yourdomain.com' : 'localhost',
     maxAge: 24 * 60 * 60 * 1000,
+    path: '/',
   },
   refreshToken: {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: true,
+    sameSite: 'none',
     path: '/auth/refresh',
   },
 };

@@ -48,7 +48,7 @@ export class AuthController {
     console.log('tokens', tokens);
     // Set the refresh token as a cookie
     res.cookie('refreshToken', tokens.refreshToken, cookieOptions.refreshToken);
-
+    console.log('Is secure?', cookieOptions.login.secure);
     // Redirect to the front-end with the access token in the URL
     res.redirect(`http://localhost:3000?accessToken=${tokens.accessToken}`);
   }
