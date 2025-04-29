@@ -3,6 +3,8 @@ import { comparePasswords } from 'src/utils';
 import { JwtService } from '@nestjs/jwt';
 import { IJwtPayload } from 'src/models';
 import { ConfigService } from '@nestjs/config';
+import { IGoogleUser } from 'src/models';
+import { LoginInput } from '../dto/auth.input';
 import {
   Injectable,
   BadRequestException,
@@ -27,15 +29,9 @@ export class AuthService {
     this.jwtRefreshSecret = this.config.get<string>('JWT_REFRESH_SECRET');
   }
 
-  async validateUser({
-    username,
-    email,
-    password,
-  }: {
-    username?: string;
-    email?: string;
-    password: string;
-  }) {
+  async validateUser(loginDto: LoginInput) {
+    const { username, email, password } = loginDto;
+
     if ((!username && !email) || !password) {
       throw new BadRequestException('Provide correct credentials.');
     }
@@ -51,12 +47,19 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    const isPasswordValid = await comparePasswords(password, user.password);
+    if (user.provider !== 'local') {
+      throw new UnauthorizedException(`Please log in using ${user.provider}`);
+    }
+
+    const isPasswordValid = await comparePasswords(
+      password,
+      user.password as string,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    console.log('user', user);
+
     const accessToken = this.jwt.sign(
       { sub: user.id },
       { expiresIn: this.accessTokenExp, secret: this.jwtSecret },
@@ -76,15 +79,30 @@ export class AuthService {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const newAccessToken: string = this.jwt.sign(
-      { sub: payload.sub },
-      { expiresIn: this.accessTokenExp, secret: this.jwtSecret },
-    );
-    const newRefreshToken: string = this.jwt.sign(
-      { sub: payload.sub },
-      { expiresIn: this.refreshTokenExp, secret: this.jwtRefreshSecret },
-    );
+    const newAccessToken = this.generateAccessToken(payload.sub.id);
+    const newRefreshToken = this.generateRefreshToken(payload.sub.id);
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  }
+
+  async handleGoogleUser(googleUser: IGoogleUser) {
+    const user = await this.userService.findOrCreateGoogleUser(googleUser);
+
+    const accessToken = this.generateAccessToken(user.id);
+    const refreshToken = this.generateRefreshToken(user.id);
+
+    return { accessToken, refreshToken };
+  }
+  generateAccessToken(userId: string) {
+    return this.jwt.sign(
+      { sub: userId },
+      { expiresIn: this.accessTokenExp, secret: this.jwtSecret },
+    );
+  }
+  generateRefreshToken(userId: string) {
+    return this.jwt.sign(
+      { sub: userId },
+      { expiresIn: this.refreshTokenExp, secret: this.jwtRefreshSecret },
+    );
   }
 }

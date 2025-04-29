@@ -1,6 +1,7 @@
 import { PrismaService } from 'src/services';
 import { Injectable } from '@nestjs/common';
 import { CreateGameInput } from '../dto/game.input';
+import slugify from 'slugify';
 @Injectable()
 export class GameService {
   constructor(private prismaService: PrismaService) {}
@@ -25,10 +26,14 @@ export class GameService {
       },
     });
   }
+
+  //Todo handle slug errors.
   createGame(data: CreateGameInput) {
+    const slug: string = slugify(data.title, { lower: true });
     return this.prismaService.game.create({
       data: {
         ...data,
+        slug,
       },
     });
   }

@@ -6,10 +6,15 @@ import {
   Res,
   HttpCode,
   UnauthorizedException,
+  Get,
+  UseGuards,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from '../services/auth.service';
 import { LoginInput } from '../dto/auth.input';
+import { GoogleOauthGuard } from '../guards/google.auth.guard';
+import { cookieOptions } from 'src/utils';
+import { IGoogleUser } from 'src/models';
 
 @Controller('auth')
 export class AuthController {
@@ -24,15 +29,28 @@ export class AuthController {
     const { accessToken, refreshToken } =
       await this.authService.validateUser(loginDto);
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      domain: 'localhost',
-      maxAge: 24 * 60 * 60 * 1000,
-    });
+    res.cookie('refreshToken', refreshToken, cookieOptions.login);
 
     return { accessToken };
+  }
+
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuth() {}
+
+  @Get('google/callback')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
+    const googleUser: IGoogleUser = req.user as IGoogleUser;
+
+    // Call handleGoogleUser only once
+    const tokens = await this.authService.handleGoogleUser(googleUser);
+
+    // Set the refresh token as a cookie
+    res.cookie('refreshToken', tokens.refreshToken, cookieOptions.refreshToken);
+
+    // Redirect to the front-end with the access token in the URL
+    res.redirect(`http://localhost:3001?accessToken=${tokens.accessToken}`);
   }
 
   @Post('refresh')
@@ -47,12 +65,11 @@ export class AuthController {
 
     const tokens = this.authService.refreshTokens(refreshToken);
 
-    res.cookie('refresh_token', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      path: '/auth/refresh',
-    });
+    res.cookie(
+      'refresh_token',
+      tokens.refreshToken,
+      cookieOptions.refreshToken,
+    );
 
     return { accessToken: tokens.accessToken };
   }

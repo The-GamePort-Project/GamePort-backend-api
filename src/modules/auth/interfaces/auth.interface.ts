@@ -9,3 +9,9 @@ export interface IJwtPayload {
   iat?: number;
   exp?: number;
 }
+export interface IGoogleUser {
+  email: string;
+  firstName: string;
+  lastName: string;
+  googleId: string;
+}
