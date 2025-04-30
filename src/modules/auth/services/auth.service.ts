@@ -30,24 +30,29 @@ export class AuthService {
   }
 
   async validateUser(loginDto: LoginInput) {
+    console.log('1');
     const { username, email, password } = loginDto;
-
+    console.log('1.1');
     if ((!username && !email) || !password) {
       throw new BadRequestException('Provide correct credentials.');
     }
+    console.log('2');
     if (username && email) {
       throw new BadRequestException('Provide either username or email.');
     }
+    console.log('3');
     const user = await this.userService.getUserByUsernameOrEmail({
       username,
       email,
     });
-
+    console.log('4');
+    console.log('loginDto', loginDto, 'User', user);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
     if (user.provider !== 'local') {
+      console.log('User not local');
       throw new UnauthorizedException(`Please log in using ${user.provider}`);
     }
 
@@ -57,6 +62,7 @@ export class AuthService {
     );
 
     if (!isPasswordValid) {
+      console.log('Invalid password');
       throw new UnauthorizedException('Invalid credentials');
     }
 

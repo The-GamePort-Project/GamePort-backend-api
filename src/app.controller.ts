@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+import { hashPassword } from './utils';
 import { PrismaService } from './services';
 @Controller()
 export class AppController {
@@ -26,6 +27,7 @@ export class AppController {
     if (adminUser) {
       return 'Admin user already exists';
     }
+    const hashedPassword = await hashPassword('Test123');
     // Create a new admin user
     this.prisma.user
       .create({
@@ -34,7 +36,7 @@ export class AppController {
           firstname: 'Test',
           lastname: 'Test',
           username: 'Test',
-          password: 'Test123',
+          password: hashedPassword,
           provider: 'local',
         },
       })
@@ -45,11 +47,16 @@ export class AppController {
   }
   @Get('delete-admin')
   async deleteAdmin(): Promise<string> {
-    await this.prisma.user.delete({
-      where: {
-        email: 'test123@mail.com',
-      },
-    });
-    return 'Admin user deleted';
+    try {
+      await this.prisma.user.delete({
+        where: {
+          email: 'test123@mail.com',
+        },
+      });
+      return 'Admin user deleted';
+    } catch (error) {
+      console.error('Delete error:', error);
+      return 'Admin user not found or could not be deleted';
+    }
   }
 }
