@@ -13,10 +13,7 @@ export const cookieOptions: Record<string, CookieOptions> = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    domain:
-      process.env.NODE_ENV === 'production'
-        ? 'delightful-alfajores-1db8c9.netlify.app'
-        : undefined,
+    domain: undefined,
 
     maxAge: 24 * 60 * 60 * 1000,
     path: '/',
@@ -25,10 +22,7 @@ export const cookieOptions: Record<string, CookieOptions> = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-    domain:
-      process.env.NODE_ENV === 'production'
-        ? 'delightful-alfajores-1db8c9.netlify.app'
-        : undefined,
+    domain: undefined,
 
     path: '/auth/refresh',
   },
