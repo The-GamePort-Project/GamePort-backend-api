@@ -5,21 +5,19 @@ import * as cookieParser from 'cookie-parser';
 //abort on error maybe?
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: 'http://localhost:3000',
-    credentials: true,
-  });
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
   app.use(cookieParser());
   const configService = app.get(ConfigService);
-  console.log('JWT Secret:', configService.get<string>('JWT_SECRET'));
-  console.log(
-    'Access Token Expiration:',
-    configService.get<string>('JWT_ACCESS_EXPIRATION'),
-  );
-  console.log(
-    'Refresh Token Expiration:',
-    configService.get<string>('JWT_REFRESH_EXPIRATION'),
-  );
+
+  const allowedOrigin = isDevelopment
+    ? configService.get<string>('ALLOWED_ORIGIN_DEV')
+    : (configService.get<string>('ALLOWED_ORIGIN') ?? 'http://localhost:3000');
+
+  app.enableCors({
+    origin: allowedOrigin,
+    credentials: true,
+  });
   console.log(
     'Connecting to DB:',
     process.env.DATABASE_URL?.slice(0, 30) + '...',
