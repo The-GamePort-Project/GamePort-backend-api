@@ -26,7 +26,6 @@ export class AuthController {
     @Body() loginDto: LoginInput,
     @Res({ passthrough: true }) res: Response,
   ) {
-    console.log('loginDto', loginDto);
     const { accessToken, refreshToken } =
       await this.authService.validateUser(loginDto);
 

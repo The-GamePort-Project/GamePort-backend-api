@@ -11,7 +11,7 @@ export class AppController {
 
   @Get()
   getHello(): string {
-    return this.appService.getHello();
+    return process.env.NODE_ENV as string;
   }
   @Post()
   postHello(): string {
