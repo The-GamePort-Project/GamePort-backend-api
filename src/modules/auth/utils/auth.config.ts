@@ -10,7 +10,7 @@ export const AuthConfig = {
 
 export const cookieOptions: Record<string, CookieOptions> = {
   login: {
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     domain: undefined,
@@ -19,7 +19,7 @@ export const cookieOptions: Record<string, CookieOptions> = {
     path: '/',
   },
   refreshToken: {
-    httpOnly: true,
+    httpOnly: false,
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     domain: undefined,
