@@ -13,25 +13,25 @@ import { Response, Request } from 'express';
 import { AuthService } from '../services/auth.service';
 import { LoginInput } from '../dto/auth.input';
 import { GoogleOauthGuard } from '../guards/google.auth.guard';
-import { cookieOptions } from 'src/utils';
 import { IGoogleUser } from 'src/models';
+import { ConfigService } from '@nestjs/config';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private config: ConfigService,
+  ) {}
 
   @Post('login')
   @HttpCode(200)
-  async login(
-    @Body() loginDto: LoginInput,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async login(@Body() loginDto: LoginInput) {
     const { accessToken, refreshToken } =
       await this.authService.validateUser(loginDto);
-
-    res.cookie('refreshToken', refreshToken, cookieOptions.login);
-
-    return { accessToken };
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
   @Get('google')
@@ -43,34 +43,20 @@ export class AuthController {
   async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
     const googleUser: IGoogleUser = req.user as IGoogleUser;
 
-    // Call handleGoogleUser only once
     const tokens = await this.authService.handleGoogleUser(googleUser);
-    console.log('tokens', tokens);
-    // Set the refresh token as a cookie
-    res.cookie('refreshToken', tokens.refreshToken, cookieOptions.refreshToken);
-    console.log('Is secure?', cookieOptions.login.secure);
-    // Redirect to the front-end with the access token in the URL
-    res.redirect(`http://localhost:3000?accessToken=${tokens.accessToken}`);
-  }
 
+    res.redirect(
+      `${this.config.get<string>('ALLOWED_ORIGIN')}?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+    );
+  }
   @Post('refresh')
   @HttpCode(200)
-  refreshToken(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const cookies = req.cookies as Record<string, string>;
-    const refreshToken: string = cookies['refresh_token'];
+  async refresh(@Req() req: Request) {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader?.split(' ')[1];
+    if (!token) throw new UnauthorizedException('Missing refresh token');
 
-    if (!refreshToken) {
-      throw new UnauthorizedException('No refresh token found');
-    }
-
-    const tokens = this.authService.refreshTokens(refreshToken);
-
-    res.cookie(
-      'refresh_token',
-      tokens.refreshToken,
-      cookieOptions.refreshToken,
-    );
-
-    return { accessToken: tokens.accessToken };
+    const newAccessToken = await this.authService.refreshAccessToken(token);
+    return { accessToken: newAccessToken };
   }
 }

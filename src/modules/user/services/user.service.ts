@@ -82,6 +82,12 @@ export class UserService {
     });
   }
 
+  async getUserById(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
   async findOrCreateGoogleUser(googleUser: IGoogleUser) {
     console.log('Google user:', googleUser);
     let user: User | null = await this.getUserByGoogleId(googleUser.googleId);

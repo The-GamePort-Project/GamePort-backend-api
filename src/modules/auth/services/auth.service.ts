@@ -30,23 +30,21 @@ export class AuthService {
   }
 
   async validateUser(loginDto: LoginInput) {
-    console.log('1');
     const { username, email, password } = loginDto;
-    console.log('1.1');
+
     if ((!username && !email) || !password) {
       throw new BadRequestException('Provide correct credentials.');
     }
-    console.log('2');
+
     if (username && email) {
       throw new BadRequestException('Provide either username or email.');
     }
-    console.log('3');
+
     const user = await this.userService.getUserByUsernameOrEmail({
       username,
       email,
     });
-    console.log('4');
-    console.log('loginDto', loginDto, 'User', user);
+
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
@@ -76,6 +74,23 @@ export class AuthService {
     );
 
     return { accessToken, refreshToken };
+  }
+
+  async refreshAccessToken(refreshToken: string) {
+    const payload: IJwtPayload = this.jwt.verify(refreshToken);
+
+    if (!payload.sub) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    const user = await this.userService.getUserById(payload.sub.id);
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    const newAccessToken = this.generateAccessToken(user.id);
+    return { accessToken: newAccessToken };
   }
 
   refreshTokens(refreshToken: string) {
