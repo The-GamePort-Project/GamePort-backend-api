@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma-module/prisma.service';
 import { handlePrismaError, hashPassword } from 'src/utils';
 import { User } from '@prisma/client';
 import { IGoogleUser } from 'src/models';
+import { SafeUser } from '../interfaces/user.interface';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -30,7 +31,7 @@ export class UserService {
       if (provider !== 'google' && password) {
         hashedPassword = await hashPassword(password);
       }
-      return await this.prisma.user.create({
+      const newUser = await this.prisma.user.create({
         data: {
           email,
           firstname,
@@ -40,7 +41,20 @@ export class UserService {
           provider,
           googleId,
         },
+        select: {
+          id: true,
+          email: true,
+          firstname: true,
+          lastname: true,
+          username: true,
+          provider: true,
+          googleId: true,
+          createdAt: true,
+          updatedAt: true,
+          role: true,
+        },
       });
+      return newUser;
     } catch (error) {
       handlePrismaError(error);
     }
@@ -114,21 +128,24 @@ export class UserService {
   }
 
   async findOrCreateGoogleUser(googleUser: IGoogleUser) {
-    let user: User | null = await this.getUserByGoogleId(googleUser.googleId);
+    const user = await this.getUserByGoogleId(googleUser.googleId);
 
     if (!user) {
-      user = await this.createUser({
+      const newUser = await this.createUser({
         email: googleUser.email,
-        firstname: googleUser.firstName,
-        lastname: googleUser.lastName,
         username: googleUser.email.split('@')[0],
         provider: 'google',
         googleId: googleUser.googleId,
+        firstname: googleUser.firstName || googleUser.name.split(' ')[0],
+        lastname: googleUser.lastName || googleUser.name.split(' ')[1] || '',
       });
+      return newUser;
     }
-    if (user.provider !== 'google') {
-      throw new UnauthorizedException(`Please log in using ${user.provider}`);
+
+    if (!user?.provider || user.provider !== 'google') {
+      throw new UnauthorizedException(`Please log in using Google`);
     }
+
     return user;
   }
 }

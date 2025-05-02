@@ -36,16 +36,17 @@ export class UserResolver {
     return users;
   }
 
-  @Query(() => UserModel)
   @Mutation(() => UserModel)
   async createUser(@Args('data') data: CreateUserInput): Promise<UserModel> {
-    console.log('delete');
+    console.log('createUser', data);
     const newUser = await this.userService.createUser({ ...data });
     return newUser;
   }
 
   @Mutation(() => UserModel)
+  @UseGuards(GqlAuthGuard)
   async deleteUser(@Args('data') data: DeleteUserInput): Promise<boolean> {
+    console.log('deleteUser', data);
     const deletedUser = await this.userService.deleteUser(data.id);
     return !!deletedUser;
   }

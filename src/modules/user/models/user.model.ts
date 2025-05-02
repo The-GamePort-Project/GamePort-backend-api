@@ -34,9 +34,6 @@ export class UserModel {
 
   @Field(() => [String], { nullable: true })
   reviews?: string[] | null;
-
-  @Field(() => String, { nullable: true })
-  password?: string | null;
 }
 // model User {
 //   id        String   @id @default(uuid())

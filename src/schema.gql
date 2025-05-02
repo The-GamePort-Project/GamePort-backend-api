@@ -14,7 +14,6 @@ type UserModel {
   googleId: String
   role: String!
   reviews: [String!]
-  password: String
 }
 
 """
@@ -26,7 +25,6 @@ type Query {
   sayHello: String!
   getUsers: [UserModel!]!
   getUsersPaginated(data: GetAllUsersInput!): UserModel!
-  createUser(data: CreateUserInput!): UserModel!
 }
 
 input GetAllUsersInput {
@@ -34,17 +32,18 @@ input GetAllUsersInput {
   skip: Float
 }
 
+type Mutation {
+  createUser(data: CreateUserInput!): UserModel!
+  deleteUser(data: DeleteUserInput!): UserModel!
+}
+
 input CreateUserInput {
   email: String!
   firstname: String
   lastname: String
   username: String!
-  password: String!
-}
-
-type Mutation {
-  createUser(data: CreateUserInput!): UserModel!
-  deleteUser(data: DeleteUserInput!): UserModel!
+  password: String
+  repeat_password: String
 }
 
 input DeleteUserInput {

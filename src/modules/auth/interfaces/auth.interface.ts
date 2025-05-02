@@ -13,4 +13,5 @@ export interface IGoogleUser {
   firstName: string;
   lastName: string;
   googleId: string;
+  name: string;
 }
