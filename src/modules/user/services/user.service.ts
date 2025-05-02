@@ -57,6 +57,31 @@ export class UserService {
     return this.prisma.user.findMany();
   }
 
+  async getUsersPaginated({
+    pagination: { skip = 0, take = 10 } = { skip: 0, take: 10 },
+  }: {
+    pagination?: { skip?: number; take?: number };
+  }) {
+    return this.prisma.user.findMany({
+      skip,
+      take,
+      orderBy: {
+        createdAt: 'desc',
+      },
+      select: {
+        id: true,
+        email: true,
+        firstname: true,
+        lastname: true,
+        username: true,
+        provider: true,
+        createdAt: true,
+        updatedAt: true,
+        role: true,
+      },
+    });
+  }
+
   async getUserByUsernameOrEmail({
     username,
     email,
@@ -89,7 +114,6 @@ export class UserService {
   }
 
   async findOrCreateGoogleUser(googleUser: IGoogleUser) {
-    console.log('Google user:', googleUser);
     let user: User | null = await this.getUserByGoogleId(googleUser.googleId);
 
     if (!user) {

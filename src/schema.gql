@@ -10,6 +10,11 @@ type UserModel {
   username: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  provider: String!
+  googleId: String
+  role: String!
+  reviews: [String!]
+  password: String
 }
 
 """
@@ -20,11 +25,13 @@ scalar DateTime
 type Query {
   sayHello: String!
   getUsers: [UserModel!]!
+  getUsersPaginated(data: GetAllUsersInput!): UserModel!
+  createUser(data: CreateUserInput!): UserModel!
 }
 
-type Mutation {
-  createUser(data: CreateUserInput!): UserModel!
-  deleteUser(data: DeleteUserInput!): UserModel!
+input GetAllUsersInput {
+  take: Float
+  skip: Float
 }
 
 input CreateUserInput {
@@ -33,6 +40,11 @@ input CreateUserInput {
   lastname: String
   username: String!
   password: String!
+}
+
+type Mutation {
+  createUser(data: CreateUserInput!): UserModel!
+  deleteUser(data: DeleteUserInput!): UserModel!
 }
 
 input DeleteUserInput {

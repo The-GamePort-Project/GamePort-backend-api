@@ -1,8 +1,13 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { UserModel } from '../models/user.model';
+import { GqlAuthGuard } from 'src/modules/auth/guards/jwt.guard';
+import { UseGuards } from '@nestjs/common';
 import { UserService } from 'src/services';
-import { CreateUserInput } from '../dto/user.input';
-import { DeleteUserInput } from '../dto/user.input';
+import {
+  CreateUserInput,
+  DeleteUserInput,
+  GetAllUsersInput,
+} from '../dto/user.input';
 
 @Resolver(() => UserModel)
 export class UserResolver {
@@ -13,22 +18,28 @@ export class UserResolver {
   }
 
   @Query(() => [UserModel])
+  @UseGuards(GqlAuthGuard)
   async getUsers(): Promise<UserModel[]> {
     const users = await this.userService.getAllUsers();
-    return users.map((user) => ({
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      firstname: user.firstname ?? '',
-      lastname: user.lastname ?? '',
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    }));
+    console.log('getUsers', users.length);
+    return users;
   }
 
+  @Query(() => UserModel)
+  @UseGuards(GqlAuthGuard)
+  async getUsersPaginated(
+    @Args('data') data: GetAllUsersInput,
+  ): Promise<UserModel[]> {
+    const users = await this.userService.getUsersPaginated({
+      pagination: data || null,
+    });
+    return users;
+  }
+
+  @Query(() => UserModel)
   @Mutation(() => UserModel)
   async createUser(@Args('data') data: CreateUserInput): Promise<UserModel> {
-    console.log('delet');
+    console.log('delete');
     const newUser = await this.userService.createUser({ ...data });
     return newUser;
   }

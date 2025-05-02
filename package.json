@@ -21,7 +21,7 @@
     "seed:create-genres": "dotenv -e .env.development ts-node src/prisma-module/utils/factory/create-genres.seed.ts",
     "seed": "dotenv -e .env.development ts-node src/prisma-module/utils/factory/user-games.seed.ts",
     "seed:create-admin": "dotenv -e .env.development ts-node src/prisma-module/utils/factory/create-admin.seed.ts",
-    "reset": "dotenv -e .env.development -- npx prisma migrate reset --force && npm run seed",
+    "reset": "dotenv -e .env.development -- npx prisma migrate reset --force",
     "migrate:deploy": "prisma migrate deploy",
     "migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev --name",
     "migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",

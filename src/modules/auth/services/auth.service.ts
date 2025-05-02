@@ -65,7 +65,7 @@ export class AuthService {
     }
 
     const accessToken = this.jwt.sign(
-      { sub: user.id },
+      { sub: user.id, role: user.role },
       { expiresIn: this.accessTokenExp, secret: this.jwtSecret },
     );
     const refreshToken: string = this.jwt.sign(
@@ -77,13 +77,14 @@ export class AuthService {
   }
 
   async refreshAccessToken(refreshToken: string) {
-    const payload: IJwtPayload = this.jwt.verify(refreshToken);
+    console.log('Refresh token received:', refreshToken.length);
+    const payload: IJwtPayload = this.validateRefreshToken(refreshToken);
 
-    if (!payload.sub) {
-      throw new UnauthorizedException('Invalid refresh token');
+    if (!payload.sub || !payload.exp || Date.now() >= payload.exp * 1000) {
+      throw new UnauthorizedException('Refresh token expired or invalid');
     }
 
-    const user = await this.userService.getUserById(payload.sub.id);
+    const user = await this.userService.getUserById(payload.sub);
 
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -94,14 +95,16 @@ export class AuthService {
   }
 
   refreshTokens(refreshToken: string) {
-    const payload: IJwtPayload = this.jwt.verify(refreshToken);
+    const payload: IJwtPayload = this.jwt.verify(refreshToken, {
+      secret: this.jwtRefreshSecret,
+    });
 
     if (!payload.sub) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    const newAccessToken = this.generateAccessToken(payload.sub.id);
-    const newRefreshToken = this.generateRefreshToken(payload.sub.id);
+    const newAccessToken = this.generateAccessToken(payload.sub);
+    const newRefreshToken = this.generateRefreshToken(payload.sub);
 
     return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
@@ -125,5 +128,45 @@ export class AuthService {
       { sub: userId },
       { expiresIn: this.refreshTokenExp, secret: this.jwtRefreshSecret },
     );
+  }
+
+  validateAccessToken(token: string) {
+    try {
+      const payload = this.jwt.verify<IJwtPayload>(token, {
+        secret: this.jwtSecret,
+      });
+      return payload;
+    } catch (error) {
+      console.log('Invalid refresh token', error);
+      throw new UnauthorizedException('Invalid access token');
+    }
+  }
+  validateRefreshToken(token: string): IJwtPayload {
+    try {
+      return this.jwt.verify<IJwtPayload>(token, {
+        secret: this.jwtRefreshSecret,
+        ignoreExpiration: false,
+      });
+    } catch (error) {
+      if (error instanceof Error && error.name === 'TokenExpiredError') {
+        console.log('Refresh token expired');
+        throw new UnauthorizedException('Refresh token expired');
+      }
+
+      console.log('Invalid refresh token', error);
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async validateUserById(id: string) {
+    return await this.userService.getUserById(id);
+  }
+
+  async validateUserByGoogleId(googleId: string) {
+    const user = await this.userService.getUserByGoogleId(googleId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return user;
   }
 }

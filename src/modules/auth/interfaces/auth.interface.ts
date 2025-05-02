@@ -3,9 +3,8 @@ export interface IAuthTokens {
   refreshToken: string;
 }
 export interface IJwtPayload {
-  sub: {
-    id: string;
-  };
+  sub: string;
+  role: string;
   iat?: number;
   exp?: number;
 }

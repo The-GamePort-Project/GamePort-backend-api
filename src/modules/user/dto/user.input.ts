@@ -29,3 +29,18 @@ export class DeleteUserInput {
   @Field(() => String)
   id: string;
 }
+
+@InputType()
+export class GetUserInput {
+  @Field(() => String)
+  id: string;
+}
+
+@InputType()
+export class GetAllUsersInput {
+  @Field(() => Number, { nullable: true })
+  take?: number;
+
+  @Field(() => Number, { nullable: true })
+  skip?: number;
+}
