@@ -23,3 +23,12 @@ export class CreateGameInput {
   @Field(() => String, { nullable: true })
   trailerUrl: string | null;
 }
+
+@InputType()
+export class GetGamesPaginatedInput {
+  @Field(() => Number, { nullable: true })
+  take?: number;
+
+  @Field(() => Number, { nullable: true })
+  skip?: number;
+}

@@ -3,7 +3,6 @@ import { PrismaService } from 'src/prisma-module/prisma.service';
 import { handlePrismaError, hashPassword } from 'src/utils';
 import { User } from '@prisma/client';
 import { IGoogleUser } from 'src/models';
-import { SafeUser } from '../interfaces/user.interface';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}

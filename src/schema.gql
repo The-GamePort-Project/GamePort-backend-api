@@ -21,13 +21,35 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type GameModel {
+  id: String!
+  title: String!
+  slug: String!
+  rating: Float!
+  description: String
+  developer: String
+  publisher: String
+  releaseDate: String
+  coverImageUrl: String
+  trailerUrl: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  genres: [String!]
+}
+
 type Query {
   sayHello: String!
   getUsers: [UserModel!]!
-  getUsersPaginated(data: GetAllUsersInput!): UserModel!
+  getUsersPaginated(data: GetUsersPaginatedInput!): UserModel!
+  games(data: GetGamesPaginatedInput): [GameModel!]!
 }
 
-input GetAllUsersInput {
+input GetUsersPaginatedInput {
+  take: Float
+  skip: Float
+}
+
+input GetGamesPaginatedInput {
   take: Float
   skip: Float
 }
@@ -35,6 +57,7 @@ input GetAllUsersInput {
 type Mutation {
   createUser(data: CreateUserInput!): UserModel!
   deleteUser(data: DeleteUserInput!): UserModel!
+  addGame(data: CreateGameInput!): GameModel!
 }
 
 input CreateUserInput {
@@ -43,9 +66,18 @@ input CreateUserInput {
   lastname: String
   username: String!
   password: String
-  repeat_password: String
 }
 
 input DeleteUserInput {
   id: String!
+}
+
+input CreateGameInput {
+  title: String!
+  description: String
+  developer: String!
+  publisher: String!
+  releaseDate: DateTime!
+  coverImageUrl: String
+  trailerUrl: String
 }

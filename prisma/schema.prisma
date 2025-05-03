@@ -47,6 +47,7 @@ model Game {
   releaseDate   DateTime
   coverImageUrl String?
   trailerUrl    String?
+  rating        Float   @default(0.0)
 
   genres    Genre[]     @relation("GameGenres")
   platforms Platform[]  @relation("GamePlatforms")

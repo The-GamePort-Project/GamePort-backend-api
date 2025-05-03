@@ -23,6 +23,7 @@ export class GameService {
         publisher: true,
         releaseDate: true,
         coverImageUrl: true,
+        rating: true,
       },
     });
   }

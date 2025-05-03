@@ -1,4 +1,4 @@
-import { ObjectType, Field } from '@nestjs/graphql';
+import { ObjectType, Field, Float } from '@nestjs/graphql';
 
 @ObjectType()
 export class GameModel {
@@ -10,6 +10,9 @@ export class GameModel {
 
   @Field(() => String)
   slug: string;
+
+  @Field(() => Float)
+  rating: number;
 
   @Field(() => String, { nullable: true })
   description?: string | null;
@@ -34,4 +37,7 @@ export class GameModel {
 
   @Field(() => Date, { nullable: true })
   updatedAt?: Date | null;
+
+  @Field(() => [String], { nullable: true })
+  genres?: string[] | null;
 }

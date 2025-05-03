@@ -6,7 +6,7 @@ import { UserService } from 'src/services';
 import {
   CreateUserInput,
   DeleteUserInput,
-  GetAllUsersInput,
+  GetUsersPaginatedInput,
 } from '../dto/user.input';
 
 @Resolver(() => UserModel)
@@ -28,7 +28,7 @@ export class UserResolver {
   @Query(() => UserModel)
   @UseGuards(GqlAuthGuard)
   async getUsersPaginated(
-    @Args('data') data: GetAllUsersInput,
+    @Args('data') data: GetUsersPaginatedInput,
   ): Promise<UserModel[]> {
     const users = await this.userService.getUsersPaginated({
       pagination: data || null,

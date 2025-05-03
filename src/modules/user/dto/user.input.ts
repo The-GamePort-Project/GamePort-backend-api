@@ -16,9 +16,6 @@ export class CreateUserInput {
 
   @Field(() => String, { nullable: true })
   password?: string;
-
-  @Field(() => String, { nullable: true })
-  repeat_password?: string;
 }
 
 @InputType()
@@ -40,7 +37,7 @@ export class GetUserInput {
 }
 
 @InputType()
-export class GetAllUsersInput {
+export class GetUsersPaginatedInput {
   @Field(() => Number, { nullable: true })
   take?: number;
 
