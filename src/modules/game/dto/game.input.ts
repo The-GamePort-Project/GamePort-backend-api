@@ -32,3 +32,12 @@ export class GetGamesPaginatedInput {
   @Field(() => Number, { nullable: true })
   skip?: number;
 }
+
+@InputType()
+export class GetGameInput {
+  @Field(() => String, { nullable: true })
+  id?: string;
+
+  @Field(() => String, { nullable: true })
+  slug?: string;
+}

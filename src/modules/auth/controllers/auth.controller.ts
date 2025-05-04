@@ -42,11 +42,15 @@ export class AuthController {
   @UseGuards(GoogleOauthGuard)
   async googleAuthRedirect(@Req() req: Request, @Res() res: Response) {
     const googleUser: IGoogleUser = req.user as IGoogleUser;
-
+    console.log('Google user:', googleUser);
     const tokens = await this.authService.handleGoogleUser(googleUser);
-
+    let allowed_origin = this.config.get<string>('ALLOWED_ORIGIN');
+    if (!allowed_origin || !allowed_origin.length) {
+      allowed_origin = this.config.get<string>('ALLOWED_ORIGIN_DEV');
+    }
+    console.log('Allowed origin:', allowed_origin);
     res.redirect(
-      `${this.config.get<string>('ALLOWED_ORIGIN')}?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
+      `${allowed_origin}?accessToken=${tokens.accessToken}&refreshToken=${tokens.refreshToken}`,
     );
   }
   @Post('refresh')

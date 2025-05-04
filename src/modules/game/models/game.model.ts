@@ -1,4 +1,5 @@
 import { ObjectType, Field, Float } from '@nestjs/graphql';
+import { GenreModel } from './genre.model';
 
 @ObjectType()
 export class GameModel {
@@ -38,6 +39,6 @@ export class GameModel {
   @Field(() => Date, { nullable: true })
   updatedAt?: Date | null;
 
-  @Field(() => [String], { nullable: true })
-  genres?: string[] | null;
+  @Field(() => [GenreModel], { nullable: true })
+  genres?: GenreModel[];
 }

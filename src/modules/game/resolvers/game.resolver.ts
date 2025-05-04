@@ -1,7 +1,12 @@
 import { Resolver, Query, Args, Mutation } from '@nestjs/graphql';
 import { GameModel } from '../models/game.model';
 import { GameService } from 'src/services';
-import { CreateGameInput, GetGamesPaginatedInput } from '../dto/game.input';
+import {
+  CreateGameInput,
+  GetGamesPaginatedInput,
+  GetGameInput,
+} from '../dto/game.input';
+import { NotFoundException } from '@nestjs/common';
 
 @Resolver(() => GameModel)
 export class GameResolver {
@@ -13,6 +18,15 @@ export class GameResolver {
   ): Promise<GameModel[]> {
     const games = await this.gameService.getGamesPaginated(data);
     return games;
+  }
+
+  @Query(() => GameModel)
+  async game(@Args('data') data: GetGameInput): Promise<GameModel> {
+    const game = await this.gameService.getGameByIdOrSlug(data);
+    if (!game) {
+      throw new NotFoundException('Game not found');
+    }
+    return game;
   }
 
   @Mutation(() => GameModel)

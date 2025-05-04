@@ -19,19 +19,20 @@ model User {
   provider  String   @default("local")
   googleId  String?  @unique
   role      Role     @default(USER)
-  reviews   Review[]
+  reviews   Review[] @relation("UserReviews")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Review {
   id      String @id @default(uuid())
-  content String
+  comment String
+  recommend Boolean
   rating  Int
   userId  String
   gameId  String
 
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation("UserReviews", fields: [userId], references: [id])
   game      Game     @relation(fields: [gameId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

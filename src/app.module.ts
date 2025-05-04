@@ -3,7 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserService, PrismaService } from './services';
-import { UserModule, PrismaModule, AuthModule, GameModule } from './modules';
+import {
+  UserModule,
+  PrismaModule,
+  AuthModule,
+  GameModule,
+  ReviewModule,
+} from './modules';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
@@ -28,6 +34,7 @@ import { join } from 'path';
     PrismaModule,
     AuthModule,
     GameModule,
+    ReviewModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, UserService],

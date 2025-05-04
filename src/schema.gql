@@ -21,6 +21,11 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type GenreModel {
+  id: String!
+  name: String!
+}
+
 type GameModel {
   id: String!
   title: String!
@@ -34,7 +39,18 @@ type GameModel {
   trailerUrl: String
   createdAt: DateTime
   updatedAt: DateTime
-  genres: [String!]
+  genres: [GenreModel!]
+}
+
+type ReviewModel {
+  gameId: String
+  userId: String
+  rating: Float!
+  comment: String
+  createdAt: DateTime
+  updatedAt: DateTime
+  game: GameModel
+  user: UserModel
 }
 
 type Query {
@@ -42,6 +58,8 @@ type Query {
   getUsers: [UserModel!]!
   getUsersPaginated(data: GetUsersPaginatedInput!): UserModel!
   games(data: GetGamesPaginatedInput): [GameModel!]!
+  game(data: GetGameInput!): GameModel!
+  getReviewsForGame(data: GetReviewsForGameInput!): [ReviewModel!]!
 }
 
 input GetUsersPaginatedInput {
@@ -54,10 +72,22 @@ input GetGamesPaginatedInput {
   skip: Float
 }
 
+input GetGameInput {
+  id: String
+  slug: String
+}
+
+input GetReviewsForGameInput {
+  gameId: String!
+  take: Float
+  skip: Float
+}
+
 type Mutation {
   createUser(data: CreateUserInput!): UserModel!
   deleteUser(data: DeleteUserInput!): UserModel!
   addGame(data: CreateGameInput!): GameModel!
+  createReview(data: CreateReviewInput!): ReviewModel!
 }
 
 input CreateUserInput {
@@ -80,4 +110,12 @@ input CreateGameInput {
   releaseDate: DateTime!
   coverImageUrl: String
   trailerUrl: String
+}
+
+input CreateReviewInput {
+  comment: String!
+  gameId: String!
+  userId: String!
+  recommend: Boolean!
+  overallRating: Float!
 }
