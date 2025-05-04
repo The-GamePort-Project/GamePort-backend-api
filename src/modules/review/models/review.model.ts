@@ -3,6 +3,9 @@ import { UserModel } from 'src/modules/user/models/user.model';
 import { GameModel } from 'src/modules/game/models/game.model';
 @ObjectType()
 export class ReviewModel {
+  @Field(() => String)
+  id: string;
+
   @Field(() => String, { nullable: true })
   gameId?: string;
 

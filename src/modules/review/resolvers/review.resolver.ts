@@ -3,6 +3,10 @@ import { ReviewModel } from '../models/review.model';
 import { ReviewService } from '../services/review.service';
 import { CreateReviewInput, GetReviewsForGameInput } from '../dto/review.input';
 import { BadRequestException } from '@nestjs/common';
+import { CurrentUser } from 'src/modules/auth/decorators/currentUser';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from 'src/modules/auth/guards/gql.auth.guard';
+import { UserModel } from 'src/modules/user/models/user.model';
 
 @Resolver(() => ReviewModel)
 export class ReviewResolver {
@@ -16,13 +20,21 @@ export class ReviewResolver {
   }
 
   @Mutation(() => ReviewModel)
+  @UseGuards(GqlAuthGuard)
   async createReview(
     @Args('data') data: CreateReviewInput,
+    @CurrentUser() user: UserModel,
   ): Promise<ReviewModel> {
-    if (!data.gameId || !data.userId) {
-      throw new BadRequestException('Game ID and User ID are required');
+    if (!data.gameId) {
+      throw new BadRequestException('Game ID are required');
     }
-    const review = await this.reviewService.createReview(data);
+    console.log('User ID:', user.id);
+    if (!user.id) {
+      console.log('User ID is missing');
+      throw new BadRequestException('User ID is required');
+    }
+
+    const review = await this.reviewService.createReview(data, user.id);
     return review;
   }
 }

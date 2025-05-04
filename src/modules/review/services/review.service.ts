@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/services';
 import { CreateReviewInput } from '../dto/review.input';
+import { UserService } from 'src/services';
 @Injectable()
 export class ReviewService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(
+    private prismaService: PrismaService,
+    private userService: UserService,
+  ) {}
 
   async getReviewById(id: string) {
     return this.prismaService.review.findUnique({
@@ -41,11 +45,12 @@ export class ReviewService {
     });
   }
 
-  async createReview(data: CreateReviewInput) {
-    const { gameId, userId, overallRating, ...rest } = data;
+  async createReview(data: CreateReviewInput, userId: string) {
+    const { gameId, rating, ...rest } = data;
+
     return this.prismaService.review.create({
       data: {
-        rating: overallRating,
+        rating: rating,
         ...rest,
         game: {
           connect: {

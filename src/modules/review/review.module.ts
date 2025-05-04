@@ -2,9 +2,12 @@ import { Module } from '@nestjs/common';
 import { PrismaService } from 'src/services';
 import { ReviewResolver } from './resolvers/review.resolver';
 import { ReviewService } from './services/review.service';
+import { UserService } from 'src/services';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  providers: [PrismaService, ReviewService, ReviewResolver],
+  imports: [AuthModule],
+  providers: [PrismaService, ReviewService, ReviewResolver, UserService],
   exports: [ReviewService],
   controllers: [],
 })

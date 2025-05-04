@@ -43,6 +43,7 @@ type GameModel {
 }
 
 type ReviewModel {
+  id: String!
   gameId: String
   userId: String
   rating: Float!
@@ -115,7 +116,6 @@ input CreateGameInput {
 input CreateReviewInput {
   comment: String!
   gameId: String!
-  userId: String!
   recommend: Boolean!
-  overallRating: Float!
+  rating: Float!
 }

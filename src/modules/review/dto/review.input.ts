@@ -8,14 +8,11 @@ export class CreateReviewInput {
   @Field(() => String)
   gameId: string;
 
-  @Field(() => String)
-  userId: string;
-
   @Field(() => Boolean)
   recommend: boolean;
 
   @Field(() => Number)
-  overallRating: number;
+  rating: number;
 }
 
 @InputType()

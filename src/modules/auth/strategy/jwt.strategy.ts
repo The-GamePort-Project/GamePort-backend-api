@@ -20,7 +20,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: IJwtPayload) {
-    console.log('JWT payload in JWT Guard:', payload.sub);
     const user = await this.authService.validateUserById(payload.sub);
     if (!user) {
       console.log('User not found in JWT Guard');
