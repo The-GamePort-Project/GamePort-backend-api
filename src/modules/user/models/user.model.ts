@@ -9,28 +9,28 @@ export class UserModel {
   email: string;
 
   @Field(() => String, { nullable: true })
-  firstname: string | null;
+  firstname?: string | null;
 
   @Field(() => String, { nullable: true })
-  lastname: string | null;
+  lastname?: string | null;
 
   @Field(() => String)
   username: string;
 
-  @Field(() => Date)
-  createdAt: Date;
+  @Field(() => Date, { nullable: true })
+  createdAt?: Date;
 
-  @Field(() => Date)
-  updatedAt: Date;
+  @Field(() => Date, { nullable: true })
+  updatedAt?: Date;
 
-  @Field(() => String)
-  provider: string;
+  @Field(() => String, { nullable: true })
+  provider?: string;
 
   @Field(() => String, { nullable: true })
   googleId?: string | null;
 
-  @Field(() => String)
-  role: string;
+  @Field(() => String, { nullable: true })
+  role?: string;
 
   @Field(() => [String], { nullable: true })
   reviews?: string[] | null;

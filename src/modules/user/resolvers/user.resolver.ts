@@ -21,7 +21,6 @@ export class UserResolver {
   @UseGuards(GqlAuthGuard)
   async getUsers(): Promise<UserModel[]> {
     const users = await this.userService.getAllUsers();
-    console.log('getUsers', users.length);
     return users;
   }
 
@@ -38,7 +37,6 @@ export class UserResolver {
 
   @Mutation(() => UserModel)
   async createUser(@Args('data') data: CreateUserInput): Promise<UserModel> {
-    console.log('createUser', data);
     const newUser = await this.userService.createUser({ ...data });
     return newUser;
   }

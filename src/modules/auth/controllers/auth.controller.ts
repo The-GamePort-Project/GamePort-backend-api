@@ -57,9 +57,9 @@ export class AuthController {
   async refresh(@Req() req: Request) {
     const authHeader = req.headers['authorization'];
     const token = authHeader?.split(' ')[1];
+    console.log('refreshing accessToken...');
     if (!token) throw new UnauthorizedException('Missing refresh token');
-
     const newAccessToken = await this.authService.refreshAccessToken(token);
-    return { accessToken: newAccessToken };
+    return newAccessToken;
   }
 }

@@ -25,6 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
       console.log('User not found in JWT Guard');
       throw new UnauthorizedException('Invalid token');
     }
+    console.log('User found in JWT Guard', user.firstname);
     return user;
   }
 }

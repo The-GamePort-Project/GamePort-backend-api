@@ -24,7 +24,7 @@ export class GameModel {
   @Field(() => String, { nullable: true })
   publisher?: string | null;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => Date, { nullable: true })
   releaseDate?: Date | null;
 
   @Field(() => String, { nullable: true })

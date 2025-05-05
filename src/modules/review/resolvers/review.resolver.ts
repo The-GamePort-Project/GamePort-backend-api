@@ -19,6 +19,11 @@ export class ReviewResolver {
     return reviews;
   }
 
+  @Query(() => [ReviewModel])
+  getAllReviews(): Promise<ReviewModel[]> {
+    return this.reviewService.getAllReviews();
+  }
+
   @Mutation(() => ReviewModel)
   @UseGuards(GqlAuthGuard)
   async createReview(
@@ -28,12 +33,18 @@ export class ReviewResolver {
     if (!data.gameId) {
       throw new BadRequestException('Game ID are required');
     }
-    console.log('User ID:', user.id);
     if (!user.id) {
       console.log('User ID is missing');
       throw new BadRequestException('User ID is required');
     }
-
+    const alreadyReviewed =
+      await this.reviewService.checkIfUserAlreadyReviewedGame(
+        data.gameId,
+        user.id,
+      );
+    if (alreadyReviewed) {
+      throw new BadRequestException('User already reviewed this game');
+    }
     const review = await this.reviewService.createReview(data, user.id);
     return review;
   }

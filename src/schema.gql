@@ -8,11 +8,11 @@ type UserModel {
   firstname: String
   lastname: String
   username: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  provider: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+  provider: String
   googleId: String
-  role: String!
+  role: String
   reviews: [String!]
 }
 
@@ -34,7 +34,7 @@ type GameModel {
   description: String
   developer: String
   publisher: String
-  releaseDate: String
+  releaseDate: DateTime
   coverImageUrl: String
   trailerUrl: String
   createdAt: DateTime
@@ -61,6 +61,7 @@ type Query {
   games(data: GetGamesPaginatedInput): [GameModel!]!
   game(data: GetGameInput!): GameModel!
   getReviewsForGame(data: GetReviewsForGameInput!): [ReviewModel!]!
+  getAllReviews: [ReviewModel!]!
 }
 
 input GetUsersPaginatedInput {

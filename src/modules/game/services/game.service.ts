@@ -24,6 +24,12 @@ export class GameService {
         releaseDate: true,
         coverImageUrl: true,
         rating: true,
+        genres: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
   }

@@ -50,6 +50,7 @@ async function main() {
           genres: {
             connect: genres.map((genre) => ({ name: genre })),
           },
+          trailerUrl: 'https://www.youtube.com/watch?v=0sdNNeaIqT8',
         },
       }),
     ),

@@ -25,7 +25,7 @@ export class AppController {
       },
     });
     if (adminUser) {
-      return 'Admin user already exists';
+      return 'Admin user already exists: test123@mail.com pw: Test123';
     }
     const hashedPassword = await hashPassword('Test123');
     // Create a new admin user

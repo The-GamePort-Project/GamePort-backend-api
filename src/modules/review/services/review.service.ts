@@ -8,7 +8,33 @@ export class ReviewService {
     private prismaService: PrismaService,
     private userService: UserService,
   ) {}
-
+  async getAllReviews() {
+    return this.prismaService.review.findMany({
+      select: {
+        id: true,
+        comment: true,
+        rating: true,
+        recommend: true,
+        game: {
+          select: {
+            id: true,
+            title: true,
+            slug: true,
+            rating: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+          },
+        },
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
   async getReviewById(id: string) {
     return this.prismaService.review.findUnique({
       where: {
@@ -44,11 +70,18 @@ export class ReviewService {
       },
     });
   }
-
+  async checkIfUserAlreadyReviewedGame(gameId: string, userId: string) {
+    return this.prismaService.review.findFirst({
+      where: {
+        gameId,
+        userId,
+      },
+    });
+  }
   async createReview(data: CreateReviewInput, userId: string) {
     const { gameId, rating, ...rest } = data;
 
-    return this.prismaService.review.create({
+    const review = await this.prismaService.review.create({
       data: {
         rating: rating,
         ...rest,
@@ -64,5 +97,25 @@ export class ReviewService {
         },
       },
     });
+    const aggregate = await this.prismaService.review.aggregate({
+      where: {
+        gameId,
+      },
+      _avg: {
+        rating: true,
+      },
+    });
+    const averageRating = aggregate._avg.rating ?? 0;
+
+    await this.prismaService.game.update({
+      where: {
+        id: gameId,
+      },
+      data: {
+        rating: averageRating,
+      },
+    });
+
+    return review;
   }
 }

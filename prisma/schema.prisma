@@ -18,6 +18,8 @@ model User {
   password  String?
   provider  String   @default("local")
   googleId  String?  @unique
+  twoFactorSecret String?  
+  isTwoFactorEnabled Boolean @default(false)
   role      Role     @default(USER)
   reviews   Review[] @relation("UserReviews")
   createdAt DateTime @default(now())
@@ -36,6 +38,7 @@ model Review {
   game      Game     @relation(fields: [gameId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+   @@unique([userId, gameId])
 }
 
 model Game {

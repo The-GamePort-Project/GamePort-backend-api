@@ -5,11 +5,15 @@ import { IJwtPayload } from 'src/models';
 import { ConfigService } from '@nestjs/config';
 import { IGoogleUser } from 'src/models';
 import { LoginInput } from '../dto/auth.input';
+// import * as speakeasy from 'speakeasy';
+// import * as qrcode from 'qrcode';
+// import { User } from '@prisma/client';
 import {
   Injectable,
   BadRequestException,
   UnauthorizedException,
 } from '@nestjs/common';
+
 @Injectable()
 export class AuthService {
   private refreshTokenExp: string | undefined;
@@ -81,12 +85,14 @@ export class AuthService {
     const payload: IJwtPayload = this.validateRefreshToken(refreshToken);
 
     if (!payload.sub || !payload.exp || Date.now() >= payload.exp * 1000) {
+      console.log('Refresh token expired or invalid');
       throw new UnauthorizedException('Refresh token expired or invalid');
     }
 
     const user = await this.userService.getUserById(payload.sub);
 
     if (!user) {
+      console.log('User not found');
       throw new UnauthorizedException('User not found');
     }
 
@@ -169,4 +175,30 @@ export class AuthService {
     }
     return user;
   }
+
+  // async generateTwoFactorSecret(user: User) {
+  //   const appName = this.config.get<string>('APP_NAME') || 'Gameport';
+  //   const secret = speakeasy.generateSecret({
+  //     name: `${appName} (${user.email})`,
+  //   });
+
+  //   const otpauthUrl = speakeasy.otpauthURL({
+  //     secret: secret.base32,
+  //     label: `${appName} (${user.email})`,
+  //     issuer: appName,
+  //   });
+
+  //   const qrCode = await qrcode.toDataURL(otpauthUrl);
+
+  //   await this.userService.setTwoFactorAuthenticationSecret(
+  //     secret.base32,
+  //     user.id,
+  //   );
+
+  //   return {
+  //     secret: secret.base32,
+  //     otpauthUrl,
+  //     qrCode,
+  //   };
+  // }
 }
