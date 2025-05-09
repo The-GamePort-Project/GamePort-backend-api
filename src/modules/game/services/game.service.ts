@@ -23,6 +23,7 @@ export class GameService {
         publisher: true,
         releaseDate: true,
         coverImageUrl: true,
+        trailerUrl: true,
         rating: true,
         genres: {
           select: {
@@ -63,6 +64,32 @@ export class GameService {
         coverImageUrl: true,
         rating: true,
         genres: true,
+      },
+    });
+  }
+
+  getGameWithHighestRating() {
+    return this.prismaService.game.findFirst({
+      orderBy: {
+        rating: 'desc',
+      },
+      select: {
+        id: true,
+        title: true,
+        slug: true,
+        description: true,
+        developer: true,
+        publisher: true,
+        releaseDate: true,
+        coverImageUrl: true,
+        trailerUrl: true,
+        rating: true,
+        genres: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
     });
   }

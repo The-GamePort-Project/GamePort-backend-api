@@ -28,7 +28,10 @@ export class GameResolver {
     }
     return game;
   }
-
+  @Query(() => GameModel)
+  async getHighestRatedGame(): Promise<GameModel | null> {
+    return await this.gameService.getGameWithHighestRating();
+  }
   @Mutation(() => GameModel)
   async addGame(@Args('data') data: CreateGameInput): Promise<CreateGameInput> {
     const newGame = await this.gameService.createGame(data);

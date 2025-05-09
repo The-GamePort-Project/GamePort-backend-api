@@ -60,6 +60,7 @@ type Query {
   getUsersPaginated(data: GetUsersPaginatedInput!): UserModel!
   games(data: GetGamesPaginatedInput): [GameModel!]!
   game(data: GetGameInput!): GameModel!
+  getHighestRatedGame: GameModel!
   getReviewsForGame(data: GetReviewsForGameInput!): [ReviewModel!]!
   getAllReviews: [ReviewModel!]!
 }
