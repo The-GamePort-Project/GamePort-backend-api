@@ -46,7 +46,7 @@ model Game {
   title         String
   slug          String   @unique
   description   String?
-  developer     String
+  developer     String?
   publisher     String
   releaseDate   DateTime
   coverImageUrl String?

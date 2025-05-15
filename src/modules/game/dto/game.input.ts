@@ -8,11 +8,14 @@ export class CreateGameInput {
   @Field(() => String, { nullable: true })
   description: string | null;
 
-  @Field(() => String)
-  developer: string;
+  @Field(() => String, { nullable: true })
+  developer: string | null;
 
   @Field(() => String)
   publisher: string;
+
+  @Field(() => String)
+  slug: string;
 
   @Field(() => Date)
   releaseDate: Date;
@@ -31,6 +34,9 @@ export class GetGamesPaginatedInput {
 
   @Field(() => Number, { nullable: true })
   skip?: number;
+
+  @Field(() => String, { nullable: true })
+  genreName?: string;
 }
 
 @InputType()

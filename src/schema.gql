@@ -24,6 +24,13 @@ scalar DateTime
 type GenreModel {
   id: String!
   name: String!
+  games: [GameModel!]
+}
+
+type PlatformModel {
+  id: String
+  name: String!
+  games: [GameModel!]
 }
 
 type GameModel {
@@ -40,6 +47,7 @@ type GameModel {
   createdAt: DateTime
   updatedAt: DateTime
   genres: [GenreModel!]
+  platforms: [PlatformModel!]
 }
 
 type ReviewModel {
@@ -60,6 +68,8 @@ type Query {
   getUsersPaginated(data: GetUsersPaginatedInput!): UserModel!
   games(data: GetGamesPaginatedInput): [GameModel!]!
   game(data: GetGameInput!): GameModel!
+  getGameForReview(data: GetGameInput!): GameModel!
+  genres(data: GetGenresInput): [GenreModel!]!
   getHighestRatedGame: GameModel!
   getReviewsForGame(data: GetReviewsForGameInput!): [ReviewModel!]!
   getAllReviews: [ReviewModel!]!
@@ -73,11 +83,19 @@ input GetUsersPaginatedInput {
 input GetGamesPaginatedInput {
   take: Float
   skip: Float
+  genreName: String
 }
 
 input GetGameInput {
   id: String
   slug: String
+}
+
+input GetGenresInput {
+  id: String
+  name: String
+  take: Float
+  skip: Float
 }
 
 input GetReviewsForGameInput {
@@ -108,8 +126,9 @@ input DeleteUserInput {
 input CreateGameInput {
   title: String!
   description: String
-  developer: String!
+  developer: String
   publisher: String!
+  slug: String!
   releaseDate: DateTime!
   coverImageUrl: String
   trailerUrl: String

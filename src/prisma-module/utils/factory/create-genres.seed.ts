@@ -9,14 +9,22 @@ const prisma = new PrismaClient();
 const genres = [
   'Action',
   'Adventure',
-  'Role-playing',
-  'Simulation',
+  'RPG',
   'Strategy',
   'Sports',
   'Puzzle',
   'Horror',
   'Racing',
   'Platformer',
+];
+
+const platforms = [
+  'PC',
+  'PlayStation 4',
+  'PlayStation 5',
+  'Xbox One',
+  'Xbox Series X/S',
+  'Nintendo Switch',
 ];
 async function main() {
   console.log('Clearing old data...');
@@ -29,6 +37,16 @@ async function main() {
       prisma.genre.create({
         data: {
           name: genre,
+        },
+      }),
+    ),
+  );
+
+  await Promise.all(
+    platforms.map((platform) =>
+      prisma.platform.create({
+        data: {
+          name: platform,
         },
       }),
     ),

@@ -8,12 +8,22 @@ export class GameService {
 
   getGamesPaginated(
     pagination: { skip?: number; take?: number } = { skip: 0, take: 10 },
+    genreName?: string,
   ) {
     return this.prismaService.game.findMany({
       ...pagination,
       orderBy: {
         createdAt: 'desc',
       },
+      where: genreName
+        ? {
+            genres: {
+              some: {
+                name: genreName,
+              },
+            },
+          }
+        : undefined,
       select: {
         id: true,
         title: true,
@@ -107,5 +117,9 @@ export class GameService {
         genres: true,
       },
     });
+  }
+
+  getAllGenres() {
+    return this.prismaService.genre.findMany();
   }
 }
